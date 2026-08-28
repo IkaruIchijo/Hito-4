@@ -1,0 +1,65 @@
+{
+  "info": {
+    "_postman_id": "c9c09025-b45f-49db-bfef-9ee159d3e404",
+    "name": "SmartTask Hito 4",
+    "description": "Coleccion para validar los contratos REST del microservicio SmartTask.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "taskId",
+      "value": "1"
+    }
+  ],
+  "item": [
+    {
+      "name": "Create task",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"id\": 1,\n  \"title\": \"Completar Hito 4\",\n  \"priority\": \"HIGH\"\n}"
+        },
+        "url": "{{baseUrl}}/api/v1/tasks"
+      }
+    },
+    {
+      "name": "List tasks",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/v1/tasks"
+      }
+    },
+    {
+      "name": "Get task by id",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/v1/tasks/{{taskId}}"
+      }
+    },
+    {
+      "name": "Complete task",
+      "request": {
+        "method": "PATCH",
+        "url": "{{baseUrl}}/api/v1/tasks/{{taskId}}/completion"
+      }
+    },
+    {
+      "name": "Delete task",
+      "request": {
+        "method": "DELETE",
+        "url": "{{baseUrl}}/api/v1/tasks/{{taskId}}"
+      }
+    }
+  ]
+}
