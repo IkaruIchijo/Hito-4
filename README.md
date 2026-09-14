@@ -1,8 +1,8 @@
-# SmartTask - Hito 4
+# SmartTask — Hito 4
 
-SmartTask es un microservicio REST para crear, consultar, completar y eliminar tareas. El proyecto conserva un dominio Java puro y desacoplado, mientras que Spring Boot, PostgreSQL, JPA, Docker y OpenAPI permanecen en la capa de infraestructura.
+SmartTask es un microservicio REST para crear, consultar, completar y eliminar tareas. El proyecto mantiene el dominio Java desacoplado de la infraestructura mediante una arquitectura **Ports & Adapters**.
 
-## Tecnologias
+## Tecnologías
 
 - Java 17+
 - Spring Boot 3.5
@@ -12,6 +12,24 @@ SmartTask es un microservicio REST para crear, consultar, completar y eliminar t
 - Docker Compose
 - Springdoc OpenAPI y Swagger UI
 - JUnit 5, Mockito, MockMvc, H2 y JaCoCo
+
+## Evidencias
+
+### Contratos REST documentados con Swagger
+
+![Endpoints de SmartTask documentados con Swagger](docs/screenshots/swagger-endpoints.png)
+
+### Creación de una tarea
+
+La operación `POST /api/v1/tasks` responde `201 Created` y devuelve la tarea registrada.
+
+![Creación exitosa de una tarea con respuesta 201](docs/screenshots/swagger-post-201.png)
+
+### Pruebas y cobertura
+
+El reporte JaCoCo registra **82 % de cobertura de instrucciones** y **100 % de cobertura de ramas**.
+
+![Reporte de cobertura JaCoCo](docs/screenshots/jacoco-cobertura.png)
 
 ## Arquitectura
 
@@ -23,9 +41,9 @@ src/main/java/cl/smarttask
 │   ├── repository       # Puerto de persistencia
 │   └── service          # Casos de uso y reglas de negocio
 └── infrastructure
-    ├── config           # Inyeccion de dependencias y OpenAPI
+    ├── config           # Inyección de dependencias y OpenAPI
     ├── persistence
-    │   ├── adapter      # Implementacion del puerto de dominio
+    │   ├── adapter      # Implementación del puerto de dominio
     │   ├── entity       # Entidades JPA
     │   ├── mapper
     │   └── repository   # Spring Data JpaRepository
@@ -43,9 +61,9 @@ Las clases de `domain` no contienen anotaciones de Spring ni JPA. La dependencia
 - Maven 3.6.3 o superior
 - Docker Desktop con Docker Compose
 
-## Ejecucion local con perfil de desarrollo
+## Ejecución local con perfil de desarrollo
 
-1. Crear el archivo local de variables de PostgreSQL:
+1. Crea el archivo local de variables de PostgreSQL:
 
    ```bash
    cp .env.example .env
@@ -57,13 +75,13 @@ Las clases de `domain` no contienen anotaciones de Spring ni JPA. La dependencia
    Copy-Item .env.example .env
    ```
 
-2. Levantar PostgreSQL:
+2. Levanta PostgreSQL:
 
    ```bash
    docker compose up -d
    ```
 
-3. Ejecutar la aplicacion con el perfil `dev`:
+3. Ejecuta la aplicación con el perfil `dev`:
 
    ```bash
    mvn spring-boot:run -Dspring-boot.run.profiles=dev
@@ -73,7 +91,7 @@ La base de datos queda disponible en `localhost:5432`. El volumen `smarttask_pos
 
 ## Contratos REST
 
-| Metodo | Ruta | Resultado esperado |
+| Método | Ruta | Resultado esperado |
 | --- | --- | --- |
 | `POST` | `/api/v1/tasks` | Crea una tarea y responde `201 Created` |
 | `GET` | `/api/v1/tasks` | Lista las tareas y responde `200 OK` |
@@ -81,7 +99,7 @@ La base de datos queda disponible en `localhost:5432`. El volumen `smarttask_pos
 | `PATCH` | `/api/v1/tasks/{id}/completion` | Marca una tarea como completada |
 | `DELETE` | `/api/v1/tasks/{id}` | Elimina una tarea y responde `204 No Content` |
 
-Ejemplo de creacion:
+Ejemplo de creación:
 
 ```bash
 curl -i -X POST http://localhost:8080/api/v1/tasks \
@@ -93,7 +111,7 @@ Las prioridades admitidas son `LOW`, `MEDIUM` y `HIGH`. Una prioridad `HIGH` cre
 
 ## Manejo global de errores
 
-`GlobalExceptionHandler` intercepta errores de validacion y excepciones del dominio. La API utiliza un contrato uniforme sin exponer stacktraces:
+`GlobalExceptionHandler` intercepta errores de validación y excepciones del dominio. La API utiliza un contrato uniforme sin exponer stacktraces:
 
 ```json
 {
@@ -105,11 +123,11 @@ Las prioridades admitidas son `LOW`, `MEDIUM` y `HIGH`. Una prioridad `HIGH` cre
 }
 ```
 
-Los codigos principales son:
+Los códigos principales son:
 
-- `400 Bad Request`: JSON incorrecto o validacion de entrada.
+- `400 Bad Request`: JSON incorrecto o validación de entrada.
 - `404 Not Found`: tarea o recurso inexistente.
-- `422 Unprocessable Entity`: identificador duplicado o regla de negocio invalida.
+- `422 Unprocessable Entity`: identificador duplicado o regla de negocio inválida.
 
 ## Swagger y OpenAPI
 
@@ -120,11 +138,11 @@ Con el perfil `dev` activo:
 
 Los controladores incluyen `@Tag`, `@Operation` y `@ApiResponses`; los DTO utilizan `@Schema`, permitiendo probar los contratos con **Try it out**.
 
-El perfil por defecto es `prod`. En dicho perfil `springdoc.api-docs.enabled` y `springdoc.swagger-ui.enabled` permanecen en `false`, por lo que la documentacion interactiva no queda expuesta en produccion.
+El perfil por defecto es `prod`. En ese perfil, `springdoc.api-docs.enabled` y `springdoc.swagger-ui.enabled` permanecen en `false`, evitando exponer la documentación interactiva en producción.
 
 ## Pruebas y cobertura
 
-Ejecutar todas las pruebas:
+Ejecuta todas las pruebas con:
 
 ```bash
 mvn clean test
@@ -138,11 +156,11 @@ El reporte de cobertura queda disponible en:
 target/site/jacoco/index.html
 ```
 
-## Coleccion Postman
+## Colección Postman
 
 La colección `postman/SmartTask-Hito4.postman_collection.json` contiene las cinco operaciones de la API y utiliza las variables `baseUrl` y `taskId`.
 
-## Ejecucion productiva
+## Ejecución productiva
 
 El perfil `prod` exige credenciales externas y no contiene valores por defecto:
 
@@ -164,3 +182,7 @@ Para detener PostgreSQL sin eliminar los datos:
 ```bash
 docker compose down
 ```
+
+## Autor
+
+Sebastián Fuentes
